@@ -3,11 +3,17 @@
  */
 typealias Stocks = Map<String, Double>
 
-/** buys `dollarAmount` (dollars) of the stock with given stockName
- * @return the number of purchased stocks (not the total owned)
+
+/** partially applied stateful computation on Stocks
+ * essentially:
+ *  (Stocks) -> Pair<Result, Stocks>
  */
-val buy : StatefulComputation2<String, Double, Double, Stocks> =
-    { stockName: String, dollarAmount: Double, portfolio: Stocks ->
+typealias Transaction<Result> = StatefulComputation<Result, Stocks>
+
+/** buys `dollarAmount` (dollars) of the stock with given stockName
+ * @return a Transaction that returns the number of purchased stocks (not the total owned) given a portfolio
+ */
+fun buy(stockName: String, dollarAmount: Double) : Transaction<Double> = { portfolio: Stocks ->
     val quantityPurchased = dollarAmount / Prices(stockName)
     val owned = portfolio[stockName] ?: 0.0
 
@@ -18,11 +24,9 @@ val buy : StatefulComputation2<String, Double, Double, Stocks> =
 }
 
 /** sells a quantity of stocks of the given name
- * @return the amount of dollars earned by the selling operation (owned)
+ * @return a Transaction that returns the amount of dollars earned by the selling operation (owned) given a portfolio
  */
-val sell : StatefulComputation2<String, Double, Double, Stocks> =
-    { stockName: String, sellQuantity: Double, portfolio: Stocks ->
-
+fun sell(stockName: String, sellQuantity: Double) : Transaction<Double> = { portfolio: Stocks ->
     val revenue = sellQuantity * Prices(stockName)
     val owned = portfolio[stockName] ?: 0.0
 
@@ -32,7 +36,7 @@ val sell : StatefulComputation2<String, Double, Double, Stocks> =
     Pair(revenue, updatedPortfolio)
 }
 
-/** @return the quantity of stocks owned for name */
-val get : StatefulComputation1<String, Double, Stocks> = { name: String, portfolio: Stocks ->
+/** @return a Transaction that returns the quantity of stocks owned for name given a portfolio */
+fun get(name: String) : Transaction<Double> = { portfolio: Stocks ->
     Pair(portfolio[name] ?: 0.0, portfolio)
 }

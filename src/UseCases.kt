@@ -7,9 +7,9 @@
  * @return number of stocks of the first type owned, and the quantity of the newly purchased stocks and updated portfolio
  */
 fun move(fromStockName: String, toStockName: String, portfolio: Stocks): Pair< Pair<Double,Double>, Stocks > {
-    val originallyOwned = get(fromStockName, portfolio).first
-    val (revenue, newPortfolio) = sell(fromStockName, originallyOwned, portfolio)
-    val (purchased, veryNewPortfolio) = buy(toStockName, revenue, newPortfolio)
+    val originallyOwned = get(fromStockName)(portfolio).first
+    val (revenue, newPortfolio) = sell(fromStockName, originallyOwned)(portfolio)
+    val (purchased, veryNewPortfolio) = buy(toStockName, revenue)(newPortfolio)
 
     return Pair( Pair(originallyOwned, purchased), veryNewPortfolio)
 }
