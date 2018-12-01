@@ -43,26 +43,7 @@ fun get(name: String) : Transaction<Double> = { portfolio: Stocks ->
     apply(portfolio[name]?: 0.0)(portfolio)
 }
 
-//region combinator functions
-
 /** @return Transaction that returns the pair of result and new portfolio, given a portfolio */
 fun <A> apply(value: A): Transaction<A> = { portfolio: Stocks ->
     Pair(value, portfolio)
 }
-
-/** allows applying a function to instances of type-A contained in a generic data structure to produce another
- * data-structure with items of type-B
- *
- * @return Transaction that returns the result of applying some transform to the result of another transaction, given a portfolio
- */
-fun <A, B> map(transaction: Transaction<A>, transform : (A) -> B) : Transaction<B> = { portfolio: Stocks ->
-    val (intermediaryResult, newPortfolio) = transaction(portfolio)
-    Pair(transform(intermediaryResult), newPortfolio) // equivalently: apply(transform(intermediaryResult))(portfolio)
-}
-
-/** the flattening version of `map` */
-fun <A, B> flatMap(transaction: Transaction<A>, transform : (A) -> Transaction<B>) : Transaction<B> = { portfolio: Stocks ->
-    val (intermediaryResult, newPortfolio) = transaction(portfolio)
-    transform(intermediaryResult)(newPortfolio)
-}
-//endregion

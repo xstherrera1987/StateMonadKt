@@ -14,4 +14,3 @@ fun move(fromStockName: String, toStockName: String): Transaction< Pair<Double,D
             }
         }
     }
-
