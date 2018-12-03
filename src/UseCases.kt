@@ -7,9 +7,9 @@
  * @return Transaction that returns the number of sold-stocks previously owned, and the quantity of new-stocks purchased
  */
 fun move(fromStockName: String, toStockName: String): Transaction< Pair<Double,Double>> =
-    flatMap( get(fromStockName )) { originallyOwned: Double ->
-        flatMap( sell(fromStockName, originallyOwned) ) { revenue: Double ->
-            map( buy(toStockName, revenue) ) { purchased: Double ->
+    get(fromStockName).flatMap { originallyOwned: Double ->
+        sell(fromStockName, originallyOwned).flatMap { revenue: Double ->
+            buy(toStockName, revenue).map { purchased: Double ->
                 Pair(originallyOwned, purchased)
             }
         }
